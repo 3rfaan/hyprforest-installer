@@ -1,4 +1,4 @@
-use crate::utils::core::*;
+use crate::utils::{contents::print_installer_info, core::*};
 use colored::Colorize;
 use installer::*;
 use std::io;

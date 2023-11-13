@@ -1,6 +1,6 @@
 use crate::{
     error, info, prompt, success, tip,
-    utils::{core::*, kb_layouts::get_kb_layouts},
+    utils::{contents::get_kb_layouts, core::*},
     warning,
 };
 use colored::Colorize;
@@ -11,37 +11,6 @@ use std::{
     path::{Path, PathBuf},
     process::{self, Command, Output},
 };
-
-pub fn print_installer_info() -> () {
-    const LOGO: &'static str = "
-███████╗██╗   ██╗███████╗██████╗ ███████╗ ██████╗ ██████╗ ███████╗███████╗████████╗
-██╔════╝██║   ██║██╔════╝██╔══██╗██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔════╝╚══██╔══╝
-█████╗  ██║   ██║█████╗  ██████╔╝█████╗  ██║   ██║██████╔╝█████╗  ███████╗   ██║   
-██╔══╝  ╚██╗ ██╔╝██╔══╝  ██╔══██╗██╔══╝  ██║   ██║██╔══██╗██╔══╝  ╚════██║   ██║   
-███████╗ ╚████╔╝ ███████╗██║  ██║██║     ╚██████╔╝██║  ██║███████╗███████║   ██║   
-╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝   ╚═╝   
-";
-    const TITLE: &'static str = "Everforest Theme Installer for Arch Linux";
-    const AUTHOR: &'static str = "Arfan Zubi";
-    const THEME: &'static str = "Sainnhe Park";
-    const LICENSE: &'static str = "2023 GNU General Public License";
-
-    println!(
-        "{logo}\n\
-        {title}\n\
-        {} {author}\n\
-        {} {theme}\n\
-        {} {license}\n",
-        "Author:".yellow(),
-        "Theme:".bright_black(),
-        "License:".bright_black(),
-        logo = LOGO.bright_black(),
-        title = TITLE.to_uppercase().green().bold(),
-        author = AUTHOR.yellow(),
-        theme = THEME.bright_black(),
-        license = LICENSE.bright_black()
-    );
-}
 
 pub fn installation_prompt() -> io::Result<()> {
     let mut input: String;

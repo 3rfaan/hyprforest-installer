@@ -116,7 +116,7 @@ pub fn cleanup_repo(home_path: &Path, repo_path: &Path) -> io::Result<()> {
 
     info!("Removing some directories and files which are not needed to be moved to ~/.config...");
 
-    cleanup_recursively(&home_path, &repo_path, entries_to_delete)?;
+    cleanup(&home_path, &repo_path, entries_to_delete)?;
 
     Ok(())
 }

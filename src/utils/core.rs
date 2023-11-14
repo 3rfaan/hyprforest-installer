@@ -99,7 +99,7 @@ pub fn copy_recursively(src: impl AsRef<Path>, dest: impl AsRef<Path>) -> io::Re
     Ok(())
 }
 
-pub fn cleanup_recursively<'a>(
+pub fn cleanup<'a>(
     home_path: impl AsRef<Path>,
     repo_path: impl AsRef<Path>,
     entries_to_delete: impl AsRef<[&'a str]>,

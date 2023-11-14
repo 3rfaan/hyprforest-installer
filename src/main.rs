@@ -104,7 +104,7 @@ fn main() -> io::Result<()> {
 
     match install_cli_utilities(&paths.home, &paths.config) {
         Ok(DownloadStatus::Success) => success!("==> Successfully installed CLI utilities"),
-        Ok(DownloadStatus::Existing) => {}
+        Ok(_) => {}
         Err(error) => error!("Installing CLI utilities failed", error),
     }
 

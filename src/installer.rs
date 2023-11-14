@@ -123,7 +123,7 @@ pub fn cleanup_repo(home_path: &Path, repo_path: &Path) -> io::Result<()> {
 
 // Creates backup of all files and directories inside ~/.config and puts it inside ~/Documents/backup
 pub fn create_backup(config_path: &Path, documents_path: &Path) -> io::Result<BackupStatus> {
-    let backup_path: PathBuf = documents_path.join("backup");
+    let backup_path: PathBuf = documents_path.join("config_backup");
 
     info!("Creating backup of your current ~/.config directory...");
 
@@ -131,7 +131,9 @@ pub fn create_backup(config_path: &Path, documents_path: &Path) -> io::Result<Ba
         fs::remove_dir_all(&backup_path)?;
     }
 
-    fs::create_dir(&backup_path)?;
+    if !backup_path.exists() {
+        fs::create_dir(&backup_path)?;
+    }
 
     if let Err(error) = copy_recursively(config_path, backup_path) {
         error!(

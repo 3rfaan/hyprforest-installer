@@ -24,6 +24,7 @@ pub enum KBLayoutStatus {
 
 pub enum BackupStatus {
     Created,
+    Existing,
     NoBackup,
 }
 

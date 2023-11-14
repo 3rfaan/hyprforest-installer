@@ -128,10 +128,8 @@ pub fn create_backup(config_path: &Path, documents_path: &Path) -> io::Result<Ba
     info!("Creating backup of your current ~/.config directory...");
 
     if backup_path.exists() {
-        fs::remove_dir_all(&backup_path)?;
-    }
-
-    if !backup_path.exists() {
+        return Ok(BackupStatus::Existing);
+    } else {
         fs::create_dir(&backup_path)?;
     }
 
@@ -268,6 +266,7 @@ fn update_hypr_config(layout_code: &str) -> io::Result<KBLayoutStatus> {
 
 pub fn install_cli_utilities(home_path: &Path, config_path: &Path) -> io::Result<DownloadStatus> {
     let zsh_path: PathBuf = home_path.join(".zsh");
+    let ranger_devicons_path: PathBuf = config_path.join("ranger/plugins/ranger_devicons");
 
     info!("Installing CLI utilies");
 
@@ -275,29 +274,35 @@ pub fn install_cli_utilities(home_path: &Path, config_path: &Path) -> io::Result
         fs::create_dir_all(&zsh_path)?;
     }
 
-    Command::new("git")
-        .arg("clone")
-        .arg("https://github.com/zsh-users/zsh-autosuggestions")
-        .arg(&zsh_path.join("zsh-autosuggestions"))
-        .output()?;
+    if !zsh_path.join("zsh-autosuggestions").exists() {
+        Command::new("git")
+            .arg("clone")
+            .arg("https://github.com/zsh-users/zsh-autosuggestions")
+            .arg(&zsh_path.join("zsh-autosuggestions"))
+            .output()?;
 
-    success!("==> Successfully cloned zsh-autosuggestions");
+        success!("==> Successfully cloned zsh-autosuggestions");
+    }
 
-    Command::new("git")
-        .arg("clone")
-        .arg("https://github.com/zsh-users/zsh-syntax-highlighting.git")
-        .arg(&zsh_path.join("zsh-syntax-highlighting"))
-        .output()?;
+    if !zsh_path.join("zsh-syntax-highlighting").exists() {
+        Command::new("git")
+            .arg("clone")
+            .arg("https://github.com/zsh-users/zsh-syntax-highlighting.git")
+            .arg(&zsh_path.join("zsh-syntax-highlighting"))
+            .output()?;
 
-    success!("==> Successfully cloned zsh-syntax-highlighting");
+        success!("==> Successfully cloned zsh-syntax-highlighting");
+    }
 
-    Command::new("git")
-        .arg("clone")
-        .arg("https://github.com/alexanderjeurissen/ranger_devicons")
-        .arg(config_path.join("ranger/plugins/ranger_devicons"))
-        .output()?;
+    if !ranger_devicons_path.exists() {
+        Command::new("git")
+            .arg("clone")
+            .arg("https://github.com/alexanderjeurissen/ranger_devicons")
+            .arg(config_path.join(ranger_devicons_path))
+            .output()?;
 
-    success!("==> Successfully cloned ranger-devicons");
+        success!("==> Successfully cloned ranger-devicons");
+    }
 
     Ok(DownloadStatus::Success)
 }

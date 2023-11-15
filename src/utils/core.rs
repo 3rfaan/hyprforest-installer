@@ -17,15 +17,20 @@ pub enum DownloadStatus {
     Existing,
 }
 
+pub enum BackupStatus {
+    Created,
+    Existing,
+    NoBackup,
+}
+
 pub enum KBLayoutStatus {
     Changed(String),
     Default,
 }
 
-pub enum BackupStatus {
-    Created,
-    Existing,
-    NoBackup,
+pub enum GraphicsCardStatus {
+    Changed,
+    Default,
 }
 
 pub struct Paths {

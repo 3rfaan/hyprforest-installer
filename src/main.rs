@@ -102,6 +102,14 @@ fn main() -> io::Result<()> {
         Err(error) => error!("Changing keyboard layout failed", error),
     }
 
+    match check_nvidia(&paths.hypr_config) {
+        Ok(GraphicsCardStatus::Changed) => {
+            success!("==> Successfully added Nvidia settings to Hypr config")
+        }
+        Ok(GraphicsCardStatus::Default) => success!("==> Using default settings"),
+        Err(error) => error!("Changing Nvidia settings failed", error),
+    }
+
     match install_cli_utilities(&paths.home, &paths.config) {
         Ok(DownloadStatus::Success) => success!("==> Successfully installed CLI utilities"),
         Ok(_) => {}

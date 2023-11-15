@@ -4,6 +4,8 @@ use crate::{
     warning,
 };
 use colored::Colorize;
+use once_cell::sync::Lazy;
+use regex::Regex;
 use std::{
     collections::BTreeMap,
     fs::{self, File},
@@ -71,7 +73,7 @@ pub fn download_wallpaper(downloads_path: &Path) -> io::Result<DownloadStatus> {
 
     info!("Downloading wallpaper into ~/Downloads");
 
-    if downloads_path.join("flowers.png").is_file() {
+    if downloads_path.join("flowers.png").exists() {
         return Ok(DownloadStatus::Existing);
     }
 
@@ -97,11 +99,11 @@ pub fn set_wallpaper(downloads_path: &Path, documents_path: &Path) -> io::Result
     let src_path: PathBuf = downloads_path.join("flowers.png");
     let dest_path: PathBuf = wallpapers_path.join("flowers.png");
 
-    if !dest_path.is_file() {
+    if !dest_path.exists() {
         fs::copy(&src_path, dest_path)?;
     }
 
-    if src_path.is_file() {
+    if src_path.exists() {
         fs::remove_file(src_path)?;
 
         success!("==> Wallpaper in ~/Downloads/flowers.png has been removed");
@@ -209,11 +211,11 @@ fn get_kb_layout_code() -> io::Result<KBLayoutStatus> {
         }
     }
 
-    Ok(update_hypr_config(&input)?)
+    Ok(update_hypr_kb_layout(&input)?)
 }
 
 // Helper function for `change_kb_layout()` to modify Hyprland config file
-fn update_hypr_config(layout_code: &str) -> io::Result<KBLayoutStatus> {
+fn update_hypr_kb_layout(layout_code: &str) -> io::Result<KBLayoutStatus> {
     if layout_code == "us" {
         return Ok(KBLayoutStatus::Default);
     }
@@ -253,7 +255,7 @@ fn update_hypr_config(layout_code: &str) -> io::Result<KBLayoutStatus> {
 
     temp_file_stream.flush()?;
 
-    if temp_file_path.is_file() {
+    if temp_file_path.exists() {
         fs::copy(temp_file_path, paths.hypr_config)?;
         fs::remove_file(temp_file_path)?;
 
@@ -262,6 +264,60 @@ fn update_hypr_config(layout_code: &str) -> io::Result<KBLayoutStatus> {
     }
 
     Ok(KBLayoutStatus::Changed(layout_code.to_string()))
+}
+
+pub fn check_nvidia(hypr_config: &Path) -> io::Result<GraphicsCardStatus> {
+    let mut input: String;
+
+    loop {
+        prompt!("Are you using a NVIDIA graphics card? [y/N]");
+
+        input = read_input()?;
+
+        match parse_input(&input) {
+            UserInput::Yes => break,
+            UserInput::No => return Ok(GraphicsCardStatus::Default),
+            UserInput::Other => prompt!("==> Please enter [y]es or [n]o!"),
+        }
+    }
+
+    Ok(change_hypr_nvidia_env(hypr_config)?)
+}
+
+// Helper function for `check_nvidia()`
+fn change_hypr_nvidia_env(hypr_config: &Path) -> io::Result<GraphicsCardStatus> {
+    static RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^#(env = .+)$").unwrap());
+
+    let hypr_config_file: File = File::open(hypr_config)?;
+    let hypr_config_reader: BufReader<File> = BufReader::new(hypr_config_file);
+
+    let temp_file_path: &Path = Path::new("./hyprland.conf");
+    let temp_file: File = File::create(temp_file_path)?;
+    let mut temp_file_stream: BufWriter<File> = BufWriter::new(temp_file);
+
+    info!("Adding Nvidia environment variables inside Hypr config");
+
+    for line in hypr_config_reader.lines() {
+        let mut line: String = line?;
+
+        if RE.is_match(&line) {
+            line = RE.replace(&line, "$1").to_string();
+        }
+        temp_file_stream.write(line.as_bytes())?;
+        temp_file_stream.write(b"\n")?;
+    }
+
+    temp_file_stream.flush()?;
+
+    if temp_file_path.exists() {
+        fs::copy(temp_file_path, hypr_config)?;
+        fs::remove_file(temp_file_path)?;
+
+        success!("==> Copied new Hypr config file to ~/.config/Hypr/hyprland.conf");
+        success!("==> Removed temporary file");
+    }
+
+    Ok(GraphicsCardStatus::Changed)
 }
 
 pub fn install_cli_utilities(home_path: &Path, config_path: &Path) -> io::Result<DownloadStatus> {

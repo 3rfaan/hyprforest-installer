@@ -88,26 +88,10 @@ fn main() -> io::Result<()> {
         }
     }
 
-    match change_kb_layout() {
-        Ok(KBLayoutStatus::Changed(layout)) => {
-            println!(
-                "{} -> {}",
-                "==> Successfully changed keyboard layout to".green(),
-                layout.green().bold()
-            )
-        }
-        Ok(KBLayoutStatus::Default) => {
-            success!("==> Using default keyboard layout: us")
-        }
-        Err(error) => error!("Changing keyboard layout failed", error),
-    }
-
-    match check_nvidia(&paths.hypr_config) {
-        Ok(GraphicsCardStatus::Changed) => {
-            success!("==> Successfully added Nvidia settings to Hypr config")
-        }
-        Ok(GraphicsCardStatus::Default) => success!("==> Using default settings"),
-        Err(error) => error!("Changing Nvidia settings failed", error),
+    match change_settings() {
+        Ok(HyprConfig::Modified) => success!("==> Successfully modified Hypr config!"),
+        Ok(HyprConfig::Default) => success!("==> Using default Hypr config"),
+        Err(error) => error!("Modifying Hypr config failed", error),
     }
 
     match install_cli_utilities(&paths.home, &paths.config) {

@@ -1,6 +1,7 @@
-use crate::success;
+use crate::{prompt, success, utils::contents::get_kb_layouts};
 use colored::Colorize;
 use std::{
+    collections::BTreeMap,
     fs::{self, DirEntry, FileType},
     io::{self, stdin, stdout, Read, Write},
     path::{Path, PathBuf},
@@ -23,13 +24,13 @@ pub enum BackupStatus {
     NoBackup,
 }
 
-pub enum KBLayoutStatus {
-    Changed(String),
+pub enum HyprConfig {
+    Modified,
     Default,
 }
 
-pub enum GraphicsCardStatus {
-    Changed,
+pub enum KBLayout {
+    Change(String),
     Default,
 }
 
@@ -148,4 +149,31 @@ pub fn cleanup<'a>(
     }
 
     Ok(())
+}
+
+pub fn get_kb_layout_code() -> io::Result<KBLayout> {
+    let mut input: String;
+    let kb_layouts: BTreeMap<&str, &str> = get_kb_layouts();
+
+    loop {
+        prompt!("Please enter a valid keyboard layout. Press l to see a [l]ist of available options or q to [q]uit:");
+
+        input = read_input()?;
+
+        match input.as_str() {
+            "q" | "quit" => return Ok(KBLayout::Default),
+            "l" | "list" => kb_layouts
+                .iter()
+                .for_each(|(code, lang)| println!("{} -> {}", *code, *lang)),
+            _ => {
+                if let Some(_) = kb_layouts.iter().find(|(&code, _)| *code == input) {
+                    break;
+                } else {
+                    continue;
+                }
+            }
+        }
+    }
+
+    Ok(KBLayout::Change(input))
 }

@@ -1,13 +1,8 @@
-use crate::{
-    error, info, prompt, success, tip,
-    utils::{contents::get_kb_layouts, core::*},
-    warning,
-};
+use crate::{clone, error, info, prompt, success, tip, utils::core::*, warning};
 use colored::Colorize;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::{
-    collections::BTreeMap,
     fs::{self, File},
     io::{self, BufRead, BufReader, BufWriter, Write},
     path::{Path, PathBuf},
@@ -55,16 +50,9 @@ pub fn clone_repo(repo_path: &Path) -> io::Result<DownloadStatus> {
         return Ok(DownloadStatus::Existing);
     }
 
-    let output: io::Result<Output> = Command::new("git")
-        .arg("clone")
-        .arg(REPO_URL) // URL to Github repository
-        .arg(repo_path) // Destination path
-        .output();
+    clone!(REPO_URL, repo_path)?;
 
-    match output {
-        Ok(_) => Ok(DownloadStatus::Success),
-        Err(error) => Err(error),
-    }
+    Ok(DownloadStatus::Success)
 }
 
 pub fn download_wallpaper(downloads_path: &Path) -> io::Result<DownloadStatus> {
@@ -168,8 +156,13 @@ pub fn copy_config_dirs_recursively(src: &Path, dest: &Path) -> io::Result<()> {
     Ok(())
 }
 
-pub fn change_kb_layout() -> io::Result<KBLayoutStatus> {
+pub fn change_settings() -> io::Result<HyprConfig> {
     let mut input: String;
+
+    let mut change_kb_layout: bool;
+    let mut layout_code: String = "us".to_string();
+
+    let change_nvidia_env_vars: bool;
 
     loop {
         prompt!("Keyboard layout is currently set to [us]. Would you like to change it? [y/N]");
@@ -177,47 +170,61 @@ pub fn change_kb_layout() -> io::Result<KBLayoutStatus> {
         input = read_input()?;
 
         match parse_input(&input) {
-            UserInput::Yes => break,
-            UserInput::No => return Ok(KBLayoutStatus::Default),
+            UserInput::Yes => {
+                change_kb_layout = true;
+                break;
+            }
+            UserInput::No => {
+                change_kb_layout = false;
+                break;
+            }
             UserInput::Other => prompt!("==> Please enter [y]es or [n]o!"),
         }
     }
 
-    Ok(get_kb_layout_code()?)
-}
-
-// Helper function for `change_kb_layout()` to get valid keyboard layout code
-fn get_kb_layout_code() -> io::Result<KBLayoutStatus> {
-    let mut input: String;
-    let kb_layouts: BTreeMap<&str, &str> = get_kb_layouts();
-
-    loop {
-        prompt!("Please enter a valid keyboard layout. Press l to see a [l]ist of available options or q to [q]uit:");
-
-        input = read_input()?;
-
-        match input.as_str() {
-            "q" => return Ok(KBLayoutStatus::Default),
-            "l" => kb_layouts
-                .iter()
-                .for_each(|(code, lang)| println!("{} -> {}", *code, *lang)),
-            _ => {
-                if let Some(_) = kb_layouts.iter().find(|(&code, _)| *code == input) {
-                    break;
-                } else {
-                    continue;
-                }
-            }
+    if change_kb_layout {
+        match get_kb_layout_code() {
+            Ok(KBLayout::Change(code)) => layout_code = code,
+            Ok(KBLayout::Default) => change_kb_layout = false,
+            Err(error) => return Err(error),
         }
     }
 
-    Ok(update_hypr_kb_layout(&input)?)
+    loop {
+        prompt!("Are you using a NVIDIA graphics card? [y/N]");
+
+        input = read_input()?;
+
+        match parse_input(&input) {
+            UserInput::Yes => {
+                change_nvidia_env_vars = true;
+                break;
+            }
+            UserInput::No => {
+                change_nvidia_env_vars = false;
+                break;
+            }
+            UserInput::Other => prompt!("==> Please enter [y]es or [n]o!"),
+        }
+    }
+
+    if !change_kb_layout && !change_nvidia_env_vars {
+        return Ok(HyprConfig::Default);
+    }
+
+    update_hypr_config(&layout_code, change_kb_layout, change_nvidia_env_vars)?;
+
+    Ok(HyprConfig::Modified)
 }
 
 // Helper function for `change_kb_layout()` to modify Hyprland config file
-fn update_hypr_kb_layout(layout_code: &str) -> io::Result<KBLayoutStatus> {
-    if layout_code == "us" {
-        return Ok(KBLayoutStatus::Default);
+fn update_hypr_config(
+    layout_code: &str,
+    change_kb_layout: bool,
+    change_nvidia_env_vars: bool,
+) -> io::Result<HyprConfig> {
+    if layout_code == "us" && !change_nvidia_env_vars {
+        return Ok(HyprConfig::Default);
     }
 
     let paths: Paths = Paths::build();
@@ -233,23 +240,25 @@ fn update_hypr_kb_layout(layout_code: &str) -> io::Result<KBLayoutStatus> {
     let old_layout: &str = "kb_layout = us";
     let new_layout: String = format!("kb_layout = {}", layout_code);
 
+    static NVIDIA_ENV_VARS_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^#(env = .+)$").unwrap());
+
     for line in hypr_config_reader.lines() {
-        let line: String = line?;
+        let mut line: String = line?;
 
-        if line.contains(old_layout) {
-            let updated_line: String = line.replace(old_layout, &new_layout);
-
-            temp_file_stream.write(updated_line.as_bytes())?;
+        if change_kb_layout && line.contains(old_layout) {
+            line = line.replace(old_layout, &new_layout);
 
             println!(
                 "{} {}",
                 "==> Changed the following line in Hypr config file:".green(),
-                updated_line.trim().green().bold()
+                line.trim().green().bold()
             );
-        } else {
-            temp_file_stream.write(line.as_bytes())?;
         }
 
+        if change_nvidia_env_vars && NVIDIA_ENV_VARS_RE.is_match(&line) {
+            line = NVIDIA_ENV_VARS_RE.replace(&line, "$1").to_string();
+        }
+        temp_file_stream.write(line.as_bytes())?;
         temp_file_stream.write(b"\n")?;
     }
 
@@ -263,61 +272,7 @@ fn update_hypr_kb_layout(layout_code: &str) -> io::Result<KBLayoutStatus> {
         success!("==> Removed temporary file");
     }
 
-    Ok(KBLayoutStatus::Changed(layout_code.to_string()))
-}
-
-pub fn check_nvidia(hypr_config: &Path) -> io::Result<GraphicsCardStatus> {
-    let mut input: String;
-
-    loop {
-        prompt!("Are you using a NVIDIA graphics card? [y/N]");
-
-        input = read_input()?;
-
-        match parse_input(&input) {
-            UserInput::Yes => break,
-            UserInput::No => return Ok(GraphicsCardStatus::Default),
-            UserInput::Other => prompt!("==> Please enter [y]es or [n]o!"),
-        }
-    }
-
-    Ok(change_hypr_nvidia_env(hypr_config)?)
-}
-
-// Helper function for `check_nvidia()`
-fn change_hypr_nvidia_env(hypr_config: &Path) -> io::Result<GraphicsCardStatus> {
-    static RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^#(env = .+)$").unwrap());
-
-    let hypr_config_file: File = File::open(hypr_config)?;
-    let hypr_config_reader: BufReader<File> = BufReader::new(hypr_config_file);
-
-    let temp_file_path: &Path = Path::new("./hyprland.conf");
-    let temp_file: File = File::create(temp_file_path)?;
-    let mut temp_file_stream: BufWriter<File> = BufWriter::new(temp_file);
-
-    info!("Adding Nvidia environment variables inside Hypr config");
-
-    for line in hypr_config_reader.lines() {
-        let mut line: String = line?;
-
-        if RE.is_match(&line) {
-            line = RE.replace(&line, "$1").to_string();
-        }
-        temp_file_stream.write(line.as_bytes())?;
-        temp_file_stream.write(b"\n")?;
-    }
-
-    temp_file_stream.flush()?;
-
-    if temp_file_path.exists() {
-        fs::copy(temp_file_path, hypr_config)?;
-        fs::remove_file(temp_file_path)?;
-
-        success!("==> Copied new Hypr config file to ~/.config/Hypr/hyprland.conf");
-        success!("==> Removed temporary file");
-    }
-
-    Ok(GraphicsCardStatus::Changed)
+    Ok(HyprConfig::Modified)
 }
 
 pub fn install_cli_utilities(home_path: &Path, config_path: &Path) -> io::Result<DownloadStatus> {
@@ -331,31 +286,28 @@ pub fn install_cli_utilities(home_path: &Path, config_path: &Path) -> io::Result
     }
 
     if !zsh_path.join("zsh-autosuggestions").exists() {
-        Command::new("git")
-            .arg("clone")
-            .arg("https://github.com/zsh-users/zsh-autosuggestions")
-            .arg(&zsh_path.join("zsh-autosuggestions"))
-            .output()?;
+        clone!(
+            "https://github.com/zsh-users/zsh-autosuggestions",
+            &zsh_path.join("zsh-autosuggestions")
+        )?;
 
         success!("==> Successfully cloned zsh-autosuggestions");
     }
 
     if !zsh_path.join("zsh-syntax-highlighting").exists() {
-        Command::new("git")
-            .arg("clone")
-            .arg("https://github.com/zsh-users/zsh-syntax-highlighting.git")
-            .arg(&zsh_path.join("zsh-syntax-highlighting"))
-            .output()?;
+        clone!(
+            "https://github.com/zsh-users/zsh-syntax-highlighting.git",
+            &zsh_path.join("zsh-syntax-highlighting")
+        )?;
 
         success!("==> Successfully cloned zsh-syntax-highlighting");
     }
 
     if !ranger_devicons_path.exists() {
-        Command::new("git")
-            .arg("clone")
-            .arg("https://github.com/alexanderjeurissen/ranger_devicons")
-            .arg(config_path.join(ranger_devicons_path))
-            .output()?;
+        clone!(
+            "https://github.com/alexanderjeurissen/ranger_devicons",
+            config_path.join(ranger_devicons_path)
+        )?;
 
         success!("==> Successfully cloned ranger-devicons");
     }

@@ -1,4 +1,15 @@
 #[macro_export]
+macro_rules! clone {
+    ($repo:expr,$dest:expr) => {
+        Command::new("git")
+            .arg("clone")
+            .arg($repo)
+            .arg($dest)
+            .output()
+    };
+}
+
+#[macro_export]
 macro_rules! info {
     ($msg:expr) => {
         println!("\n{}", $msg.green().bold())

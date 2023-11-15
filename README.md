@@ -1,6 +1,6 @@
 # Hyprforest
 
-<p style="text-align: center;">A small _(486 KB)_ Everforest Theme for Hyprland on Arch Linux!</p>
+<p text="center">A small _(486 KB)_ Everforest Theme for Hyprland on Arch Linux!</p>
 
 This installer will take all the config files from this repository _(https://github.com/3rfaan/arch-everforest)_ and copies them into your  📁 **~/.config** directory.
 

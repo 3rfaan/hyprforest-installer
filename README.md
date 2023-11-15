@@ -1,6 +1,6 @@
 # Hyprforest
 
-<p align="center">A small _(486 KB)_ Everforest Theme for Hyprland on Arch Linux!</p>
+<p align="center">*A small (486 KB) Everforest Theme for Hyprland on Arch Linux!*</p>
 
 This installer will take all the config files from this repository _(https://github.com/3rfaan/arch-everforest)_ and copies them into your  📁 **~/.config** directory.
 
@@ -23,6 +23,6 @@ When prompted you can change the keyboard layout directly in the installer.
 
 ## After Installation
 
-After the installation process you probably have to restart Hyprland using <kb>super</kb> + <kb>shift</kb> + <kb>e</kb>.
+After the installation process you probably have to restart Hyprland using <kbd>super</kbd> + <kbd>shift</kbd> + <kbd>e</kbd>.
 
 The wallpaper can be changed inside 📁 **~/.config/hypr/hyprpaper.conf**

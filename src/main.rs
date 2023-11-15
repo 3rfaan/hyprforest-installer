@@ -66,7 +66,7 @@ fn main() -> io::Result<()> {
             success!("==> Successfully created backup at ~/Documents/backup")
         }
         Ok(BackupStatus::Existing) => {
-            success!("==> Using already existing backup at ~/Documents/config_backup")
+            success!("==> There is already a backup in ~/Documents/config_backup")
         }
         Ok(BackupStatus::NoBackup) => success!("==> Continuing installation without backup"),
         Err(error) => {

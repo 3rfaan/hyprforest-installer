@@ -212,16 +212,16 @@ pub fn change_settings() -> io::Result<HyprConfig> {
         return Ok(HyprConfig::Default);
     }
 
-    update_hypr_config(&layout_code, change_kb_layout, change_nvidia_env_vars)?;
+    update_hypr_config(change_kb_layout, change_nvidia_env_vars, &layout_code)?;
 
     Ok(HyprConfig::Modified)
 }
 
 // Helper function for `change_kb_layout()` to modify Hyprland config file
 fn update_hypr_config(
-    layout_code: &str,
     change_kb_layout: bool,
     change_nvidia_env_vars: bool,
+    layout_code: &str,
 ) -> io::Result<HyprConfig> {
     if layout_code == "us" && !change_nvidia_env_vars {
         return Ok(HyprConfig::Default);

@@ -160,7 +160,7 @@ pub fn change_settings() -> io::Result<HyprConfig> {
     let mut input: String;
 
     let mut change_kb_layout: bool;
-    let mut layout_code: String = "us".to_string();
+    let mut layout_code: String = String::from("us");
 
     let change_nvidia_env_vars: bool;
 
@@ -242,6 +242,8 @@ fn update_hypr_config(
 
     static NVIDIA_ENV_VARS_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^#(env = .+)$").unwrap());
 
+    info!("Modifying Hypr config with your settings...");
+
     for line in hypr_config_reader.lines() {
         let mut line: String = line?;
 
@@ -258,6 +260,7 @@ fn update_hypr_config(
         if change_nvidia_env_vars && NVIDIA_ENV_VARS_RE.is_match(&line) {
             line = NVIDIA_ENV_VARS_RE.replace(&line, "$1").to_string();
         }
+
         temp_file_stream.write(line.as_bytes())?;
         temp_file_stream.write(b"\n")?;
     }

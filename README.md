@@ -1,6 +1,6 @@
 # Hyprforest
 
-![Hyprforest Logo](hyprforest_logo.png)
+<p align="center">![Hyprforest Logo](hyprforest_logo.svg)</p>
 
 <p align="center"><em>A small <strong>Everforest Theme Installer</strong> for Hyprland on Arch Linux!</em></p>
 

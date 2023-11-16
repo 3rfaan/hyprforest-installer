@@ -2,7 +2,7 @@
 name = "hyprforest-installer"
 version = "0.1.0"
 authors = ["Arfan Zubi", "<zubi.arfan@gmail.com"]
-license = "GNU General Public License"
+license = "GPL-3.0-or-later"
 description = "Everforest Theme Installer for Hyprland on Arch Linux"
 readme = "README.md"
 homepage = "https://github.com/3rfaan/hyprforest-installer"
@@ -13,9 +13,10 @@ edition = "2021"
 
 [profile.release]
 strip = true
-opt-level = "z"
+opt-level = "s"
 lto = true
 codegen-units = 1
+panic = "abort"
 
 [dependencies]
 colored = "2.0.4"

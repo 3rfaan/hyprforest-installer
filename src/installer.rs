@@ -1,4 +1,8 @@
-use crate::{clone, error, info, prompt, success, tip, utils::core::*, warning};
+use crate::{
+    clone, error, info, prompt, success, tip,
+    utils::{functions::*, types::*},
+    warning,
+};
 use colored::Colorize;
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -6,7 +10,7 @@ use std::{
     fs::{self, File},
     io::{self, BufRead, BufReader, BufWriter, Write},
     path::{Path, PathBuf},
-    process::{self, Command, Output},
+    process::{self, Command},
 };
 
 pub fn installation_prompt() -> io::Result<()> {
@@ -31,20 +35,15 @@ pub fn installation_prompt() -> io::Result<()> {
     Ok(())
 }
 
-// Check if "~/.config" directory exists. If not create a new one.
-pub fn check_config_dir(config_path: &Path) -> io::Result<()> {
-    info!("Checking if ~/.config directory exists...");
-
-    fs::create_dir_all(config_path)?;
-
-    Ok(())
-}
-
 // Clones Github repo into ~/Downloads/arch-everforest
-pub fn clone_repo(repo_path: &Path) -> io::Result<DownloadStatus> {
+pub fn clone_repo(config_path: &Path, repo_path: &Path) -> io::Result<DownloadStatus> {
     const REPO_URL: &str = "https://github.com/3rfaan/arch-everforest";
 
     info!("Cloning into https://github.com/3rfaan/arch-everforest...");
+
+    if !config_path.exists() {
+        fs::create_dir_all(config_path)?;
+    }
 
     if repo_path.exists() {
         return Ok(DownloadStatus::Existing);
@@ -65,16 +64,13 @@ pub fn download_wallpaper(downloads_path: &Path) -> io::Result<DownloadStatus> {
         return Ok(DownloadStatus::Existing);
     }
 
-    let output: io::Result<Output> = Command::new("wget")
+    Command::new("wget")
         .arg(URL)
         .arg("--output-document")
         .arg(downloads_path.join("flowers.png"))
-        .output();
+        .output()?;
 
-    match output {
-        Ok(_) => Ok(DownloadStatus::Success),
-        Err(error) => Err(error),
-    }
+    Ok(DownloadStatus::Success)
 }
 
 pub fn set_wallpaper(downloads_path: &Path, documents_path: &Path) -> io::Result<()> {
@@ -156,7 +152,7 @@ pub fn copy_config_dirs_recursively(src: &Path, dest: &Path) -> io::Result<()> {
     Ok(())
 }
 
-pub fn change_settings() -> io::Result<HyprConfig> {
+pub fn change_settings(hypr_config: &Path) -> io::Result<HyprConfig> {
     let mut input: String;
 
     let mut change_kb_layout: bool;
@@ -212,13 +208,19 @@ pub fn change_settings() -> io::Result<HyprConfig> {
         return Ok(HyprConfig::Default);
     }
 
-    update_hypr_config(change_kb_layout, change_nvidia_env_vars, &layout_code)?;
+    update_hypr_config(
+        hypr_config,
+        change_kb_layout,
+        change_nvidia_env_vars,
+        &layout_code,
+    )?;
 
     Ok(HyprConfig::Modified)
 }
 
 // Helper function for `change_kb_layout()` to modify Hyprland config file
 fn update_hypr_config(
+    hypr_config: &Path,
     change_kb_layout: bool,
     change_nvidia_env_vars: bool,
     layout_code: &str,
@@ -227,10 +229,8 @@ fn update_hypr_config(
         return Ok(HyprConfig::Default);
     }
 
-    let paths: Paths = Paths::build();
-
     // Path to Hyprland config file
-    let hypr_config_file: File = File::open(&paths.hypr_config)?;
+    let hypr_config_file: File = File::open(hypr_config)?;
     let hypr_config_reader: BufReader<File> = BufReader::new(hypr_config_file);
 
     let temp_file_path: &Path = Path::new("./hyprland.conf");
@@ -268,7 +268,7 @@ fn update_hypr_config(
     temp_file_stream.flush()?;
 
     if temp_file_path.exists() {
-        fs::copy(temp_file_path, paths.hypr_config)?;
+        fs::copy(temp_file_path, hypr_config)?;
         fs::remove_file(temp_file_path)?;
 
         success!("==> Copied new Hypr config file to ~/.config/Hypr/hyprland.conf");

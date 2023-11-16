@@ -1,4 +1,4 @@
-use crate::utils::{contents::print_installer_info, core::*};
+use crate::utils::{contents::print_installer_info, functions::*, types::*};
 use colored::Colorize;
 use installer::*;
 use std::io;
@@ -13,15 +13,7 @@ fn main() -> io::Result<()> {
     print_installer_info();
     installation_prompt()?;
 
-    match check_config_dir(&paths.config) {
-        Ok(()) => success!("==> .config directory found or new one created"),
-        Err(error) => {
-            error!("Could not create ~/.config directory. Exiting...", error);
-            return Err(error);
-        }
-    }
-
-    match clone_repo(&paths.repo) {
+    match clone_repo(&paths.config, &paths.repo) {
         Ok(DownloadStatus::Success) => {
             success!("==> Successfully cloned Github repo into ~/Downloads")
         }
@@ -88,7 +80,7 @@ fn main() -> io::Result<()> {
         }
     }
 
-    match change_settings() {
+    match change_settings(&paths.hypr_config) {
         Ok(HyprConfig::Modified) => success!("==> Successfully modified Hypr config!"),
         Ok(HyprConfig::Default) => success!("==> Using default Hypr config"),
         Err(error) => error!("Modifying Hypr config failed", error),

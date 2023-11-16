@@ -6,12 +6,28 @@ This installer will take all the config files from this repository _(https://git
 
 ## Installation
 
+### Cargo
+
+```
+$ cargo install hyprforest-installer
+```
+
+You can then run the following command: 
+
+```
+$ hyprforest-installer
+```
+
+### Build from Source
+
 Execute the following commands in your terminal:
 
 ```
 $ git clone https://github.com/3rfaan/hyprforest-installer.git $HOME/Downloads/hyprforest-installer && cd $HOME/Downloads/hyprforest-installer
 $ cargo run
 ```
+
+_Note: Rust has to be installed on the system!_
 
 ## Backup
 

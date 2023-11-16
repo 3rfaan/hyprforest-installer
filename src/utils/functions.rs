@@ -1,7 +1,4 @@
-use crate::{
-    prompt, success,
-    utils::{contents::get_kb_layouts, types::*},
-};
+use crate::{prompt, success, utils::contents::get_kb_layouts, KBLayout, UserInput};
 use colored::Colorize;
 use std::{
     collections::BTreeMap,

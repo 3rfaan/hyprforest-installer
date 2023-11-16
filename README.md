@@ -1,8 +1,8 @@
 # Hyprforest
 
-<p align="center"><em>A small (1.7 MB) <strong>Everforest Theme Installer</strong> for Hyprland on Arch Linux!</em></p>
+<p align="center"><em>A small <strong>Everforest Theme Installer</strong> for Hyprland on Arch Linux!</em></p>
 
-This installer will take all the config files from this repository _(https://github.com/3rfaan/arch-everforest)_ and copies them into your  📁 **~/.config** directory.
+This installer will take all the configuration files from this repository _(https://github.com/3rfaan/arch-everforest)_ and copies them into your  📁 **~/.config** directory.
 
 ## Installation
 
@@ -10,6 +10,18 @@ This installer will take all the config files from this repository _(https://git
 
 ```
 $ cargo install hyprforest-installer
+```
+
+You can then run the following command: 
+
+```
+$ hyprforest-installer
+```
+
+### AUR
+
+```
+$ yay -S hyprforest-installer-bin
 ```
 
 You can then run the following command: 
@@ -31,11 +43,15 @@ _Note: Rust has to be installed on the system!_
 
 ## Backup
 
-A backup will be created in 📁 **~/Documents/config_backup**.
+A backup of all your old configuration files in 📁 **~/.config** will be created in 📁 **~/Documents/config_backup** before deleting anything.
 
 ## Change keyboard layout
 
 When prompted you can change the keyboard layout directly in the installer.
+
+## Nvidia Support
+
+When prompted you can enable support for Nvidia in Hyprland. The installer will then put the appropriate environment variables inside Hyprland config file.
 
 ## After Installation
 

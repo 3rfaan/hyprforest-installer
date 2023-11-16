@@ -7,7 +7,7 @@ description = "Everforest Theme Installer for Hyprland on Arch Linux"
 readme = "README.md"
 homepage = "https://github.com/3rfaan/hyprforest-installer"
 repository = "https://github.com/3rfaan/hyprforest-installer"
-keywords = ["cli", "arch", "hyprland", "everforest", "installer", "theme"]
+keywords = ["arch", "hyprland", "everforest", "installer", "theme"]
 categories = ["command-line-utilities"]
 edition = "2021"
 

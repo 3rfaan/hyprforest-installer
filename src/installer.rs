@@ -37,7 +37,7 @@ pub fn installation_prompt() -> io::Result<()> {
 
 // Clones Github repo into ~/Downloads/arch-everforest
 pub fn clone_repo(config_path: &Path, repo_path: &Path) -> io::Result<DownloadStatus> {
-    const REPO_URL: &str = "https://github.com/3rfaan/arch-everforest";
+    const URL: &str = "https://github.com/3rfaan/arch-everforest";
 
     info!("Cloning into https://github.com/3rfaan/arch-everforest...");
 
@@ -49,51 +49,35 @@ pub fn clone_repo(config_path: &Path, repo_path: &Path) -> io::Result<DownloadSt
         return Ok(DownloadStatus::Existing);
     }
 
-    clone!(REPO_URL, repo_path)?;
+    clone!(URL, repo_path)?;
 
     Ok(DownloadStatus::Success)
 }
 
-pub fn download_wallpaper(downloads_path: &Path) -> io::Result<DownloadStatus> {
+// Downloads wallpaper into ~/Documents/wallpapers
+pub fn install_wallpaper(wallpapers_path: &Path) -> io::Result<Wallpaper> {
     const URL: &str =
         "https://raw.githubusercontent.com/Apeiros-46B/everforest-walls/main/close_up/flowers.png";
 
-    info!("Downloading wallpaper into ~/Downloads");
+    let default_wallpaper_path: PathBuf = wallpapers_path.join("flowers.png");
 
-    if downloads_path.join("flowers.png").exists() {
-        return Ok(DownloadStatus::Existing);
-    }
-
-    Command::new("wget")
-        .arg(URL)
-        .arg("--output-document")
-        .arg(downloads_path.join("flowers.png"))
-        .output()?;
-
-    Ok(DownloadStatus::Success)
-}
-
-pub fn set_wallpaper(downloads_path: &Path, documents_path: &Path) -> io::Result<()> {
-    let wallpapers_path: PathBuf = documents_path.join("wallpapers");
+    info!("Downloading wallpaper into ~/Documents/wallpapers");
 
     if !wallpapers_path.exists() {
         fs::create_dir_all(&wallpapers_path)?;
     }
 
-    let src_path: PathBuf = downloads_path.join("flowers.png");
-    let dest_path: PathBuf = wallpapers_path.join("flowers.png");
-
-    if !dest_path.exists() {
-        fs::copy(&src_path, dest_path)?;
+    if default_wallpaper_path.exists() {
+        return Ok(Wallpaper::Existing);
     }
 
-    if src_path.exists() {
-        fs::remove_file(src_path)?;
+    Command::new("wget")
+        .arg(URL)
+        .arg("--output-document")
+        .arg(default_wallpaper_path)
+        .output()?;
 
-        success!("==> Wallpaper in ~/Downloads/flowers.png has been removed");
-    }
-
-    Ok(())
+    Ok(Wallpaper::Set)
 }
 
 // Delete directories and files which are not needed to moved to ~/.config directory
@@ -107,7 +91,7 @@ pub fn cleanup_repo(home_path: &Path, repo_path: &Path) -> io::Result<()> {
     Ok(())
 }
 
-// Creates backup of all files and directories inside ~/.config and puts it inside ~/Documents/backup
+// Creates backup of all files and directories inside ~/.config and puts it inside ~/Documents/config_backup
 pub fn create_backup(config_path: &Path, documents_path: &Path) -> io::Result<BackupStatus> {
     let backup_path: PathBuf = documents_path.join("config_backup");
 
@@ -152,6 +136,7 @@ pub fn copy_config_dirs_recursively(src: &Path, dest: &Path) -> io::Result<()> {
     Ok(())
 }
 
+// Prompt for changing settings inside ~/.config/hypr/hyprland.conf
 pub fn change_settings(hypr_config: &Path) -> io::Result<HyprConfig> {
     let mut input: String;
 
@@ -218,7 +203,7 @@ pub fn change_settings(hypr_config: &Path) -> io::Result<HyprConfig> {
     Ok(HyprConfig::Modified)
 }
 
-// Helper function for `change_kb_layout()` to modify Hyprland config file
+// Helper function for `change_settings()` to modify Hyprland config file
 fn update_hypr_config(
     hypr_config: &Path,
     change_kb_layout: bool,

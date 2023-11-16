@@ -6,15 +6,15 @@ pub enum UserInput {
     Other,
 }
 
-pub enum DownloadStatus {
-    Success,
-    Existing,
-}
-
 pub enum BackupStatus {
     Created,
     Existing,
     NoBackup,
+}
+
+pub enum DownloadStatus {
+    Success,
+    Existing,
 }
 
 pub enum HyprConfig {
@@ -27,6 +27,11 @@ pub enum KBLayout {
     Default,
 }
 
+pub enum Wallpaper {
+    Set,
+    Existing,
+}
+
 pub struct Paths {
     pub home: PathBuf,
     pub config: PathBuf,
@@ -34,6 +39,7 @@ pub struct Paths {
     pub documents: PathBuf,
     pub repo: PathBuf,
     pub hypr_config: PathBuf,
+    pub wallpapers: PathBuf,
 }
 
 impl Paths {
@@ -49,6 +55,9 @@ impl Paths {
             hypr_config: dirs::config_dir()
                 .expect("Cannot get ~/.config path")
                 .join("hypr/hyprland.conf"),
+            wallpapers: dirs::document_dir()
+                .expect("Cannot get ~/Documents path")
+                .join("wallpapers"),
         }
     }
 }

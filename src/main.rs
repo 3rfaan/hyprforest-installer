@@ -29,15 +29,12 @@ fn main() -> io::Result<()> {
         }
     }
 
-    match download_wallpaper(&paths.downloads) {
-        Ok(DownloadStatus::Success) | Ok(DownloadStatus::Existing) => {
-            success!("==> Wallpaper is located at ~/Downloads/flowers.png");
-            match set_wallpaper(&paths.downloads, &paths.documents) {
-                Ok(()) => success!(
-                    "==> Wallpaper has been set to location ~/Documents/wallpapers successfully"
-                ),
-                Err(error) => error!("Could not set wallpaper", error),
-            }
+    match install_wallpaper(&paths.wallpapers) {
+        Ok(Wallpaper::Set) => {
+            success!("==> Successfully downloaded wallpaper to ~/Documents/wallpapers");
+        }
+        Ok(Wallpaper::Existing) => {
+            success!("==> Wallpaper already found in ~/Documents/wallpapers")
         }
         Err(error) => error!(
             "Could not download wallpaper. Ensure `wget` is installed on your system!",

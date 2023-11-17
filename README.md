@@ -8,7 +8,7 @@ This installer will take all the configuration files from this repository _(http
 
 ## Installation
 
-### Cargo
+### [Crates.io](https://crates.io/crates/hyprforest-installer)
 
 ```
 $ cargo install hyprforest-installer
@@ -20,7 +20,7 @@ You can then run the following command:
 $ hyprforest-installer
 ```
 
-### AUR
+### [AUR](https://aur.archlinux.org/packages/hyprforest-installer-bin)
 
 ```
 $ yay -S hyprforest-installer-bin

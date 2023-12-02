@@ -82,7 +82,14 @@ pub fn install_wallpaper(wallpapers_path: &Path) -> io::Result<Wallpaper> {
 
 // Delete directories and files which are not needed to moved to ~/.config directory
 pub fn cleanup_repo(home_path: &Path, repo_path: &Path) -> io::Result<()> {
-    let entries_to_delete: &[&str] = &["arch-everforest_short.mp4", ".git", "README.md", "zsh"];
+    let entries_to_delete: &[&str] = &[
+        "arch-everforest.png",
+        "arch-everforest_short.mp4",
+        ".git",
+        "logo.png",
+        "README.md",
+        "zsh",
+    ];
 
     info!("Removing some directories and files which are not needed to be moved to ~/.config...");
 

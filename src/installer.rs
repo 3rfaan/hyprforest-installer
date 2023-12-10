@@ -10,10 +10,10 @@ use std::{
     fs::{self, File},
     io::{self, BufRead, BufReader, BufWriter, Write},
     path::{Path, PathBuf},
-    process::{self, Command},
+    process::Command,
 };
 
-pub fn installation_prompt() -> io::Result<()> {
+pub fn installation_prompt() -> io::Result<Installation> {
     let mut input: String;
 
     tip!("This installer will copy the config files from this repo: https://github.com/3rfaan/arch-everforest\n\
@@ -26,13 +26,11 @@ pub fn installation_prompt() -> io::Result<()> {
         input = read_input()?;
 
         match parse_input(&input) {
-            UserInput::Yes => break,
-            UserInput::No => process::exit(1),
+            UserInput::Yes => return Ok(Installation::Proceed),
+            UserInput::No => return Ok(Installation::Exit),
             UserInput::Other => prompt!("==> Please enter [y]es or [n]o!"),
         }
     }
-
-    Ok(())
 }
 
 // Clones Github repo into ~/Downloads/arch-everforest

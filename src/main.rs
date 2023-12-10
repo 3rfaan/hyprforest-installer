@@ -11,7 +11,14 @@ fn main() -> io::Result<()> {
 
     // Installer
     print_installer_info();
-    installation_prompt()?;
+    match installation_prompt() {
+        Ok(Installation::Proceed) => success!("==> Proceeding with installation..."),
+        Ok(Installation::Exit) => {
+            error!("==> Exiting...");
+            return Ok(());
+        }
+        Err(error) => return Err(error),
+    }
 
     match clone_repo(&paths.config, &paths.repo) {
         Ok(DownloadStatus::Success) => {

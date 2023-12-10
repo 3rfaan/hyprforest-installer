@@ -6,6 +6,11 @@ pub enum UserInput {
     Other,
 }
 
+pub enum Installation {
+    Proceed,
+    Exit,
+}
+
 pub enum BackupStatus {
     Created,
     Existing,

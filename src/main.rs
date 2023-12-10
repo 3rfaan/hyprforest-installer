@@ -11,10 +11,11 @@ fn main() -> io::Result<()> {
 
     // Installer
     print_installer_info();
+
     match installation_prompt() {
         Ok(Installation::Proceed) => success!("==> Proceeding with installation..."),
         Ok(Installation::Exit) => {
-            error!("==> Exiting...");
+            info!("==> Exiting...");
             return Ok(());
         }
         Err(error) => return Err(error),

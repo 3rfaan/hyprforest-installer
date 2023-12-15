@@ -53,7 +53,7 @@ pub fn clone_repo(config_path: &Path, repo_path: &Path) -> io::Result<DownloadSt
 }
 
 // Downloads wallpaper into ~/Documents/wallpapers
-pub fn install_wallpaper(wallpapers_path: &Path) -> io::Result<Wallpaper> {
+pub fn set_wallpaper(wallpapers_path: &Path) -> io::Result<Wallpaper> {
     const URL: &str =
         "https://raw.githubusercontent.com/Apeiros-46B/everforest-walls/main/close_up/flowers.png";
 

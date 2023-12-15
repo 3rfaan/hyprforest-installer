@@ -37,7 +37,7 @@ fn main() -> io::Result<()> {
         }
     }
 
-    match install_wallpaper(&paths.wallpapers) {
+    match set_wallpaper(&paths.wallpapers) {
         Ok(Wallpaper::Set) => {
             success!("==> Successfully downloaded wallpaper to ~/Documents/wallpapers");
         }

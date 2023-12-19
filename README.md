@@ -6,6 +6,10 @@
 
 This installer will take all the configuration files from this repository _(https://github.com/3rfaan/arch-everforest)_ and copies them into your 📁 **~/.config** directory.
 
+## Preview
+
+<img src="https://raw.githubusercontent.com/3rfaan/arch-everforest/main/arch-everforest.png" />
+
 ## Installation
 
 ### [Crates.io](https://crates.io/crates/hyprforest-installer)

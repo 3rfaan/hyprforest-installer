@@ -1,6 +1,6 @@
 [package]
 name = "hyprforest-installer"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Arfan Zubi", "<zubi.arfan@gmail.com"]
 license = "GPL-3.0-or-later"
 description = "Everforest Theme Installer for Hyprland on Arch Linux"

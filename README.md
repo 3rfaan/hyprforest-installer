@@ -4,7 +4,7 @@
 
 <p align="center"><em>A small <strong>Everforest Theme Installer</strong> for Hyprland on Arch Linux!</em></p>
 
-This installer will take all the configuration files from this repository _(https://github.com/3rfaan/arch-everforest)_ and copies them into your  📁 **~/.config** directory.
+This installer will take all the configuration files from this repository _(https://github.com/3rfaan/arch-everforest)_ and copies them into your 📁 **~/.config** directory.
 
 ## Installation
 
@@ -14,19 +14,19 @@ This installer will take all the configuration files from this repository _(http
 $ cargo install hyprforest-installer
 ```
 
-You can then run the following command: 
+You can then run the following command:
 
 ```
 $ hyprforest-installer
 ```
 
-### [AUR](https://aur.archlinux.org/packages/hyprforest-installer-bin)
+### [AUR](https://aur.archlinux.org/packages/hyprforest-installer-git)
 
 ```
-$ yay -S hyprforest-installer-bin
+$ yay -S hyprforest-installer-git
 ```
 
-You can then run the following command: 
+You can then run the following command:
 
 ```
 $ hyprforest-installer

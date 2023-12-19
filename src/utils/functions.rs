@@ -28,7 +28,7 @@ pub fn pause() -> io::Result<()> {
     prompt!("Press Enter to close this installer... ");
 
     stdout().flush()?;
-    stdin().read(&mut [0])?;
+    let _ = stdin().read(&mut [0])?;
 
     Ok(())
 }
@@ -110,7 +110,7 @@ pub fn get_kb_layout_code() -> io::Result<KBLayout> {
                 .iter()
                 .for_each(|(code, lang)| println!("{} -> {}", *code, *lang)),
             _ => {
-                if let Some(_) = kb_layouts.iter().find(|(&code, _)| *code == input) {
+                if kb_layouts.iter().any(|(&code, _)| *code == input) {
                     break;
                 } else {
                     continue;

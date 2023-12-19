@@ -1,8 +1,8 @@
 use colored::Colorize;
 use std::collections::BTreeMap;
 
-pub fn print_installer_info() -> () {
-    const LOGO: &'static str = "
+pub fn print_installer_info() {
+    const LOGO: &str = "
 
 ██╗  ██╗██╗   ██╗██████╗ ██████╗ ███████╗ ██████╗ ██████╗ ███████╗███████╗████████╗
 ██║  ██║╚██╗ ██╔╝██╔══██╗██╔══██╗██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔════╝╚══██╔══╝
@@ -12,10 +12,10 @@ pub fn print_installer_info() -> () {
 ╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝   ╚═╝   
 
 ";
-    const TITLE: &'static str = "Everforest Theme Installer for Hyprland on Arch Linux";
-    const AUTHOR: &'static str = "Arfan Zubi";
-    const THEME: &'static str = "Sainnhe Park";
-    const LICENSE: &'static str = "GNU General Public License";
+    const TITLE: &str = "Everforest Theme Installer for Hyprland on Arch Linux";
+    const AUTHOR: &str = "Arfan Zubi";
+    const THEME: &str = "Sainnhe Park";
+    const LICENSE: &str = "GNU General Public License";
 
     println!(
         "{logo}\n\

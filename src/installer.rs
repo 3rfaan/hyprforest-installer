@@ -62,7 +62,7 @@ pub fn set_wallpaper(wallpapers_path: &Path) -> io::Result<Wallpaper> {
     info!("Downloading wallpaper into ~/Documents/wallpapers");
 
     if !wallpapers_path.exists() {
-        fs::create_dir_all(&wallpapers_path)?;
+        fs::create_dir_all(wallpapers_path)?;
     }
 
     if default_wallpaper_path.exists() {
@@ -91,7 +91,7 @@ pub fn cleanup_repo(home_path: &Path, repo_path: &Path) -> io::Result<()> {
 
     info!("Removing some directories and files which are not needed to be moved to ~/.config...");
 
-    cleanup(&home_path, &repo_path, entries_to_delete)?;
+    cleanup(home_path, repo_path, entries_to_delete)?;
 
     Ok(())
 }
@@ -251,8 +251,8 @@ fn update_hypr_config(
             line = NVIDIA_ENV_VARS_RE.replace(&line, "$1").to_string();
         }
 
-        temp_file_stream.write(line.as_bytes())?;
-        temp_file_stream.write(b"\n")?;
+        temp_file_stream.write_all(line.as_bytes())?;
+        temp_file_stream.write_all(b"\n")?;
     }
 
     temp_file_stream.flush()?;

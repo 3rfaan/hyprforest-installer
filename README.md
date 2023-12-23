@@ -24,7 +24,7 @@ You can then run the following command:
 $ hyprforest-installer
 ```
 
-### [AUR](https://aur.archlinux.org/packages/hyprforest-installer-git)
+### [AUR](https://aur.archlinux.org/packages/hyprforest-installer-bin)
 
 ```
 $ yay -S hyprforest-installer-git

@@ -12,9 +12,9 @@ pub fn print_installer_info() {
 ╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝   ╚═╝   
 
 ";
-    const TITLE: &str = "Everforest Theme Installer for Hyprland on Arch Linux";
+    const TITLE: &str = "Auto-ricer for Hyprland on Arch Linux";
     const AUTHOR: &str = "Arfan Zubi";
-    const THEME: &str = "Sainnhe Park";
+    const THEME: &str = "Catppuccin";
     const LICENSE: &str = "GNU General Public License";
 
     println!(

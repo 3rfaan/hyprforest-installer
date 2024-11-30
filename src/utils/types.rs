@@ -56,7 +56,7 @@ impl Paths {
             documents: dirs::document_dir().expect("Cannot get ~/Documents path"),
             repo: dirs::download_dir()
                 .expect("Cannot get ~/Downloads path")
-                .join("arch-everforest"),
+                .join("dotfiles"),
             hypr_config: dirs::config_dir()
                 .expect("Cannot get ~/.config path")
                 .join("hypr/hyprland.conf"),

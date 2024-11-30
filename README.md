@@ -2,38 +2,40 @@
 
 <p align="center"><img src="hyprforest_logo.png" /></p>
 
-<p align="center"><em>A small <strong>Everforest Theme Installer</strong> for Hyprland on Arch Linux!</em></p>
+<p align="center"><em>A small <strong>auto-ricer</strong> for Hyprland on Arch Linux!</em></p>
 
-This installer will take all the configuration files from this repository _(https://github.com/3rfaan/arch-everforest)_ and copies them into your 📁 **~/.config** directory.
+This installer will take all the configuration files from this repository _(https://github.com/3rfaan/dotfiles)_ and copies them into your 📁 **~/.config** directory.
+
+**⚠️ NOTE: You have to install all the necessary program from this [Guide](https://github.com/3rfaan/dotfiles/blob/main/README.md), otherwise the ricing won't have an effect on your system!**
 
 ## Preview
 
-<img src="https://raw.githubusercontent.com/3rfaan/arch-everforest/main/arch-everforest.png" />
+<img src="https://raw.githubusercontent.com/3rfaan/dotfiles/refs/heads/main/preview.png" />
 
 ## Installation
 
-### [Crates.io](https://crates.io/crates/hyprforest-installer)
+### [Crates.io](https://crates.io/crates/autoricer)
 
 ```
-$ cargo install hyprforest-installer
-```
-
-You can then run the following command:
-
-```
-$ hyprforest-installer
-```
-
-### [AUR](https://aur.archlinux.org/packages/hyprforest-installer-bin)
-
-```
-$ yay -S hyprforest-installer-git
+$ cargo install autoricer
 ```
 
 You can then run the following command:
 
 ```
-$ hyprforest-installer
+$ autoricer
+```
+
+### [AUR](https://aur.archlinux.org/packages/autoricer-bin)
+
+```
+$ yay -S autoricer-bin
+```
+
+You can then run the following command:
+
+```
+$ autoricer
 ```
 
 ### Build from Source
@@ -41,11 +43,11 @@ $ hyprforest-installer
 Execute the following commands in your terminal:
 
 ```
-$ git clone https://github.com/3rfaan/hyprforest-installer.git $HOME/Downloads/hyprforest-installer && cd $HOME/Downloads/hyprforest-installer
+$ git clone https://github.com/3rfaan/autoricer.git $HOME/Downloads/autoricer && cd $HOME/Downloads/autoricer
 $ cargo run
 ```
 
-_Note: Rust has to be installed on the system!_
+_Note: Rust has to be installed on the system to build from source!_
 
 ## Backup
 

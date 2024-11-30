@@ -80,7 +80,13 @@ pub fn set_wallpaper(wallpapers_path: &Path) -> io::Result<Wallpaper> {
 
 // Delete directories and files which are not needed to moved to ~/.config directory
 pub fn cleanup_repo(home_path: &Path, repo_path: &Path) -> io::Result<()> {
-    let entries_to_delete: &[&str] = &["preview.png", ".git", "README.md", "zsh"];
+    let entries_to_delete: &[&str] = &[
+        "arch_wallpaper.jpg",
+        "preview.png",
+        ".git",
+        "README.md",
+        "zsh",
+    ];
 
     info!("Removing some directories and files which are not needed to be moved to ~/.config...");
 

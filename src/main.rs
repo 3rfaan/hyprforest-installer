@@ -1,4 +1,4 @@
-use crate::utils::{contents::print_installer_info, functions::pause, types::*};
+use crate::utils::{contents::print_installer_info, helper_functions::pause, types::*};
 use colored::Colorize;
 use installer::*;
 use std::io;
@@ -37,20 +37,7 @@ fn main() -> io::Result<()> {
         }
     }
 
-    match set_wallpaper(&paths.wallpapers) {
-        Ok(Wallpaper::Set) => {
-            success!("==> Successfully downloaded wallpaper to ~/Documents/wallpapers");
-        }
-        Ok(Wallpaper::Existing) => {
-            success!("==> Wallpaper already found in ~/Documents/wallpapers")
-        }
-        Err(error) => error!(
-            "Could not download wallpaper. Ensure `wget` is installed on your system!",
-            error
-        ),
-    }
-
-    match cleanup_repo(&paths.home, &paths.repo) {
+    match cleanup_repo(&paths) {
         Ok(()) => success!("==> Cleanup was successful"),
         Err(error) => error!(
             "There was an error while cleaning up ~/Downloads/arch-everforest",

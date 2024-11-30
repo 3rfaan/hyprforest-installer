@@ -1,12 +1,12 @@
 [package]
 name = "hyprforest-installer"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Arfan Zubi", "<zubi.arfan@gmail.com"]
 license = "GPL-3.0-or-later"
 description = "Everforest Theme Installer for Hyprland on Arch Linux"
 readme = "README.md"
-homepage = "https://github.com/3rfaan/hyprforest-installer"
-repository = "https://github.com/3rfaan/hyprforest-installer"
+homepage = "https://github.com/3rfaan/autoricer"
+repository = "https://github.com/3rfaan/autoricer"
 keywords = ["arch", "hyprland", "everforest", "installer", "theme"]
 categories = ["command-line-utilities"]
 edition = "2021"

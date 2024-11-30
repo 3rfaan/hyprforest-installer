@@ -1,6 +1,6 @@
 use crate::{
     clone, error, info, prompt, success, tip,
-    utils::{functions::*, types::*},
+    utils::{helper_functions::*, types::*},
     warning,
 };
 use colored::Colorize;
@@ -52,34 +52,8 @@ pub fn clone_repo(config_path: &Path, repo_path: &Path) -> io::Result<DownloadSt
     Ok(DownloadStatus::Success)
 }
 
-// Downloads wallpaper into ~/Documents/wallpapers
-pub fn set_wallpaper(wallpapers_path: &Path) -> io::Result<Wallpaper> {
-    const URL: &str =
-        "https://raw.githubusercontent.com/3rfaan/dotfiles/refs/heads/main/arch_wallpaper.jpg";
-
-    let default_wallpaper_path: PathBuf = wallpapers_path.join("flowers.png");
-
-    info!("Downloading wallpaper into ~/Documents/wallpapers");
-
-    if !wallpapers_path.exists() {
-        fs::create_dir_all(wallpapers_path)?;
-    }
-
-    if default_wallpaper_path.exists() {
-        return Ok(Wallpaper::Existing);
-    }
-
-    Command::new("wget")
-        .arg(URL)
-        .arg("--output-document")
-        .arg(default_wallpaper_path)
-        .output()?;
-
-    Ok(Wallpaper::Set)
-}
-
 // Delete directories and files which are not needed to moved to ~/.config directory
-pub fn cleanup_repo(home_path: &Path, repo_path: &Path) -> io::Result<()> {
+pub fn cleanup_repo(paths: &Paths) -> io::Result<()> {
     let entries_to_delete: &[&str] = &[
         "arch_wallpaper.jpg",
         "preview.png",
@@ -90,7 +64,7 @@ pub fn cleanup_repo(home_path: &Path, repo_path: &Path) -> io::Result<()> {
 
     info!("Removing some directories and files which are not needed to be moved to ~/.config...");
 
-    cleanup(home_path, repo_path, entries_to_delete)?;
+    cleanup(paths, entries_to_delete)?;
 
     Ok(())
 }

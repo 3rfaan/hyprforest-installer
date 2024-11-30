@@ -32,15 +32,9 @@ pub enum KBLayout {
     Default,
 }
 
-pub enum Wallpaper {
-    Set,
-    Existing,
-}
-
 pub struct Paths {
     pub home: PathBuf,
     pub config: PathBuf,
-    pub downloads: PathBuf,
     pub documents: PathBuf,
     pub repo: PathBuf,
     pub hypr_config: PathBuf,
@@ -52,7 +46,6 @@ impl Paths {
         Self {
             home: dirs::home_dir().expect("Cannot get ~ path"),
             config: dirs::config_dir().expect("Cannot get ~/.config path"),
-            downloads: dirs::download_dir().expect("Cannot get ~/Downloads path"),
             documents: dirs::document_dir().expect("Cannot get ~/Documents path"),
             repo: dirs::download_dir()
                 .expect("Cannot get ~/Downloads path")

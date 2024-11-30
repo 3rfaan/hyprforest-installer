@@ -1,4 +1,4 @@
-use crate::{prompt, success, utils::contents::get_kb_layouts, KBLayout, UserInput};
+use crate::{prompt, success, utils::contents::get_kb_layouts, KBLayout, Paths, UserInput};
 use colored::Colorize;
 use std::{
     collections::BTreeMap,
@@ -49,20 +49,23 @@ pub fn copy_recursively(src: impl AsRef<Path>, dest: impl AsRef<Path>) -> io::Re
     Ok(())
 }
 
-pub fn cleanup<'a>(
-    home_path: impl AsRef<Path>,
-    repo_path: impl AsRef<Path>,
-    entries_to_delete: impl AsRef<[&'a str]>,
-) -> io::Result<()> {
-    for entry in fs::read_dir(repo_path)? {
+pub fn cleanup<'a>(paths: &Paths, entries_to_delete: impl AsRef<[&'a str]>) -> io::Result<()> {
+    for entry in fs::read_dir(&paths.repo)? {
         let entry: DirEntry = entry?;
         let filetype: FileType = entry.file_type()?;
 
+        if entry.file_name() == "arch_wallpaper.jpg" {
+            if !paths.wallpapers.exists() {
+                fs::create_dir_all(&paths.wallpapers)?;
+            }
+
+            fs::copy(entry.path(), paths.wallpapers.join("arch_wallpaper.jpg"))?;
+
+            success!("==> Successfully set wallpaper in ~/Documents/wallpapers");
+        }
+
         if entry.file_name() == "zsh" {
-            fs::copy(
-                entry.path().join(".zshrc"),
-                home_path.as_ref().join(".zshrc"),
-            )?;
+            fs::copy(entry.path().join(".zshrc"), paths.home.join(".zshrc"))?;
 
             success!("==> Copied .zshrc to ~/.zshrc before removing zsh directory");
         }

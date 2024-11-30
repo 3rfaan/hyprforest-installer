@@ -1,4 +1,4 @@
 pub mod contents;
-pub mod functions;
+pub mod helper_functions;
 pub mod macros;
 pub mod types;

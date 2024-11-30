@@ -35,9 +35,9 @@ pub fn installation_prompt() -> io::Result<Installation> {
 
 // Clones Github repo into ~/Downloads/arch-everforest
 pub fn clone_repo(config_path: &Path, repo_path: &Path) -> io::Result<DownloadStatus> {
-    const URL: &str = "https://github.com/3rfaan/arch-everforest";
+    const URL: &str = "https://github.com/3rfaan/dotfiles";
 
-    info!("Cloning into https://github.com/3rfaan/arch-everforest...");
+    info!("Cloning into https://github.com/3rfaan/dotfiles...");
 
     if !config_path.exists() {
         fs::create_dir_all(config_path)?;
@@ -55,7 +55,7 @@ pub fn clone_repo(config_path: &Path, repo_path: &Path) -> io::Result<DownloadSt
 // Downloads wallpaper into ~/Documents/wallpapers
 pub fn set_wallpaper(wallpapers_path: &Path) -> io::Result<Wallpaper> {
     const URL: &str =
-        "https://raw.githubusercontent.com/Apeiros-46B/everforest-walls/main/close_up/flowers.png";
+        "https://raw.githubusercontent.com/3rfaan/dotfiles/refs/heads/main/arch_wallpaper.jpg";
 
     let default_wallpaper_path: PathBuf = wallpapers_path.join("flowers.png");
 
@@ -80,14 +80,7 @@ pub fn set_wallpaper(wallpapers_path: &Path) -> io::Result<Wallpaper> {
 
 // Delete directories and files which are not needed to moved to ~/.config directory
 pub fn cleanup_repo(home_path: &Path, repo_path: &Path) -> io::Result<()> {
-    let entries_to_delete: &[&str] = &[
-        "arch-everforest.png",
-        "arch-everforest_short.mp4",
-        ".git",
-        "logo.png",
-        "README.md",
-        "zsh",
-    ];
+    let entries_to_delete: &[&str] = &["preview.png", ".git", "README.md", "zsh"];
 
     info!("Removing some directories and files which are not needed to be moved to ~/.config...");
 

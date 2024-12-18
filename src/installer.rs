@@ -56,7 +56,10 @@ pub fn clone_repo(config_path: &Path, repo_path: &Path) -> io::Result<DownloadSt
 pub fn cleanup_repo(paths: &Paths) -> io::Result<()> {
     let entries_to_delete: &[&str] = &[
         "arch_wallpaper.jpg",
-        "preview.png",
+        "preview_1.png",
+        "preview_2.png",
+        "preview_3.png",
+        "preview_4.png",
         ".git",
         "README.md",
         "zsh",
@@ -243,7 +246,7 @@ fn update_hypr_config(
 
 pub fn install_cli_utilities(home_path: &Path, config_path: &Path) -> io::Result<DownloadStatus> {
     let zsh_path: PathBuf = home_path.join(".zsh");
-    let ranger_devicons_path: PathBuf = config_path.join("ranger/plugins/ranger_devicons");
+    let yazi_path: PathBuf = config_path.join("yazi/plugins");
 
     info!("Installing CLI utilies");
 
@@ -269,13 +272,37 @@ pub fn install_cli_utilities(home_path: &Path, config_path: &Path) -> io::Result
         success!("==> Successfully cloned zsh-syntax-highlighting");
     }
 
-    if !ranger_devicons_path.exists() {
-        clone!(
-            "https://github.com/alexanderjeurissen/ranger_devicons",
-            config_path.join(ranger_devicons_path)
-        )?;
+    if !yazi_path.exists() {
+        fs::create_dir_all(&yazi_path)?;
+    }
 
-        success!("==> Successfully cloned ranger-devicons");
+    let yazi_packages: &[&str] = &[
+        "yazi-rs/flavors:catppuccin-macchiato",
+        "yazi-rs/plugins:full-border",
+        "dedukun/bookmarks",
+    ];
+
+    if command_exists("ya") {
+        for &package in yazi_packages {
+            Command::new("ya")
+                .arg("pack")
+                .arg("-a")
+                .arg(package)
+                .output()?;
+        }
+
+        // relative-motions plugin
+        let rm_status = Command::new("git")
+            .arg("clone")
+            .arg("--branch")
+            .arg("0.3.3")
+            .arg("https://github.com/dedukun/relative-motions.yazi.git")
+            .arg(yazi_path.join("relative-motions.yazi"))
+            .output()?;
+
+        println!("{}", rm_status.status);
+    } else {
+        warning!("Could not install ya packages for yazi. Make sure ya is installed and try to install them manually");
     }
 
     Ok(DownloadStatus::Success)

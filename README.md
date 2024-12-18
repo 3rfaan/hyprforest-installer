@@ -10,7 +10,7 @@ This installer will take all the configuration files from this repository _(http
 
 ## Preview
 
-<img src="https://raw.githubusercontent.com/3rfaan/dotfiles/refs/heads/main/preview.png" />
+<img src="https://raw.githubusercontent.com/3rfaan/dotfiles/refs/heads/main/preview_1.png" />
 
 ## Installation
 

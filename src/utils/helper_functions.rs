@@ -5,6 +5,7 @@ use std::{
     fs::{self, DirEntry, FileType},
     io::{self, stdin, stdout, Read, Write},
     path::Path,
+    process::Command,
 };
 
 pub fn read_input() -> io::Result<String> {
@@ -123,4 +124,8 @@ pub fn get_kb_layout_code() -> io::Result<KBLayout> {
     }
 
     Ok(KBLayout::Change(input))
+}
+
+pub fn command_exists(command: &str) -> bool {
+    Command::new(command).arg("-v").output().is_ok()
 }

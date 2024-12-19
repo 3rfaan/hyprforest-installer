@@ -277,9 +277,10 @@ pub fn install_cli_utilities(home_path: &Path, config_path: &Path) -> io::Result
     }
 
     let yazi_packages: &[&str] = &[
+        "dedukun/bookmarks",
+        "dedukun/relative-motions",
         "yazi-rs/flavors:catppuccin-macchiato",
         "yazi-rs/plugins:full-border",
-        "dedukun/bookmarks",
     ];
 
     if command_exists("ya") {
@@ -290,17 +291,6 @@ pub fn install_cli_utilities(home_path: &Path, config_path: &Path) -> io::Result
                 .arg(package)
                 .output()?;
         }
-
-        // relative-motions plugin
-        let rm_status = Command::new("git")
-            .arg("clone")
-            .arg("--branch")
-            .arg("0.3.3")
-            .arg("https://github.com/dedukun/relative-motions.yazi.git")
-            .arg(yazi_path.join("relative-motions.yazi"))
-            .output()?;
-
-        println!("{}", rm_status.status);
     } else {
         warning!("Could not install ya packages for yazi. Make sure ya is installed and try to install them manually");
     }
